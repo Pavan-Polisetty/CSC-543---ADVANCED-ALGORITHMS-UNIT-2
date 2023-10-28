@@ -1,0 +1,59 @@
+#include <iostream>
+#include <vector>
+
+struct SparseMatrix {
+    std::vector<int> row;
+    std::vector<int> col;
+    std::vector<int> value;
+};
+
+SparseMatrix denseToSparse(std::vector<std::vector<int>>& denseMatrix) {
+    SparseMatrix sparseMatrix;
+
+    int numRows = denseMatrix.size();
+    int numCols = denseMatrix[0].size();
+
+    for (int i = 0; i < numRows; i++) {
+        for (int j = 0; j < numCols; j++) {
+            if (denseMatrix[i][j] != 0) {
+                sparseMatrix.row.push_back(i);
+                sparseMatrix.col.push_back(j);
+                sparseMatrix.value.push_back(denseMatrix[i][j]);
+            }
+        }
+    }
+
+    return sparseMatrix;
+}
+
+int main() {
+    std::vector<std::vector<int>> denseMatrix = {
+        {0, 0, 3, 0, 4},
+        {0, 0, 5, 7, 0},
+        {0, 0, 0, 0, 0},
+        {0, 2, 6, 0, 0}
+    };
+
+    SparseMatrix sparseMatrix = denseToSparse(denseMatrix);
+
+    // Printing the sparse matrix
+    std::cout << "Row:   ";
+    for (int r : sparseMatrix.row) {
+        std::cout << r << " ";
+    }
+    std::cout << std::endl;
+
+    std::cout << "Column: ";
+    for (int c : sparseMatrix.col) {
+        std::cout << c << " ";
+    }
+    std::cout << std::endl;
+
+    std::cout << "Value:  ";
+    for (int v : sparseMatrix.value) {
+        std::cout << v << " ";
+    }
+    std::cout << std::endl;
+
+    return 0;
+}
