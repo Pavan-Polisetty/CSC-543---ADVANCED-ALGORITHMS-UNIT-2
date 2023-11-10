@@ -1,0 +1,82 @@
+#include <iostream>
+
+// Node structure to represent non-zero elements in the sparse matrix
+struct MatrixElement {
+    int row_idx;  // Row index
+    int col_idx;  // Column index
+    int element_value;  // Element value
+    MatrixElement* next;  // Pointer to the next element in the list
+
+    MatrixElement(int row, int col, int value) : row_idx(row), col_idx(col), element_value(value), next(nullptr) {}
+};
+
+class SparseMatrix {
+private:
+    int num_rows;  // Number of rows
+    int num_cols;  // Number of columns
+    MatrixElement* head;  // Pointer to the head of the linked list
+
+public:
+    SparseMatrix(int rows, int cols) : num_rows(rows), num_cols(cols), head(nullptr) {}
+
+    // Insert a non-zero element into the sparse matrix
+    void insert(int row, int col, int value) {
+        if (row >= 0 && row < num_rows && col >= 0 && col < num_cols) {
+            if (value != 0) {
+                MatrixElement* newElement = new MatrixElement(row, col, value);
+                if (!head || row < head->row_idx || (row == head->row_idx && col < head->col_idx)) {
+                    newElement->next = head;
+                    head = newElement;
+                } else {
+                    MatrixElement* current = head;
+                    while (current->next &&
+                           (row > current->next->row_idx || (row == current->next->row_idx && col > current->next->col_idx))) {
+                        current = current->next;
+                    }
+                    newElement->next = current->next;
+                    current->next = newElement;
+                }
+            }
+        }
+    }
+
+    // Print the sparse matrix
+    void print() {
+        for (int i = 0; i < num_rows; i++) {
+            MatrixElement* current = head;
+            for (int j = 0; j < num_cols; j++) {
+                if (current && current->row_idx == i && current->col_idx == j) {
+                    std::cout << current->element_value << " ";
+                    current = current->next;
+                } else {
+                    std::cout << "0 ";
+                }
+            }
+            std::cout << std::endl;
+        }
+    }
+};
+
+int main() {
+    int rows, cols;
+    std::cout << "Enter the number of rows: ";
+    std::cin >> rows;
+    std::cout << "Enter the number of columns: ";
+    std::cin >> cols;
+
+    SparseMatrix sparseMatrix(rows, cols);
+
+    std::cout << "Enter non-zero elements (row, column, value) - Enter -1 to stop:" << std::endl;
+    int row, col, value;
+    while (true) {
+        std::cin >> row;
+        if (row == -1) break;
+        std::cin >> col >> value;
+        sparseMatrix.insert(row, col, value);
+    }
+
+    std::cout << "Sparse Matrix:" << std::endl;
+    sparseMatrix.print();
+
+    return 0;
+}
